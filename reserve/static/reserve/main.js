@@ -41,6 +41,10 @@ $(function() {
             console.log("couldn't parse!", reservation);
         } else {
             console.log(row, col);
+            //Truncate the user name if it is too long to fit
+            if(reservation[0].length > 20) {
+                reservation[0] = reservation[0].substring(0,20)+ '...';
+            }
             $('table tbody tr')
                 .eq(row)
                 .find('td')
@@ -61,7 +65,7 @@ $(function() {
 
         var date = $('table thead th').eq($(this).parents('table tbody td').index()).text();
 
-        var momentDate = moment(date, 'M / D');
+        var momentDate = moment(date, 'ddd M / D');
 
         var url = window.location.pathname ?
             window.location.pathname.substring(1) : '';
