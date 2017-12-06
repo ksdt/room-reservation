@@ -76,12 +76,20 @@ def reserve(request):
             print('requested reservation overlaps with existing reservation', reservation)
 
     if overlap: #time has already been reserved
-        if reservation.user is request.user: #users are allowed to remove their reservation
-            reservation.delete()
-            return JsonResponse({
-                'success': True,
-                'result': 'unreserved'
-            })
+        #do not use 'is' for comparisons
+        if reservation.user == request.user: #users are allowed to remove their reservation
+            if start > datetime.now() + timedelta(hours=1): #users can only unreserve times not within an hour
+                reservation.delete()
+                return JsonResponse({
+                    'success': True,
+                    'result': 'unreserved'
+                })
+            else:
+                print ("in else")
+                return JsonResponse({
+                    'success': False,
+                    'result': 'you cannot unreserve within an hour of your slot'
+                })
         elif request.user.is_staff: #staff are allowed to remove reservations
             reservation.delete()
             return JsonResponse({
